@@ -81,7 +81,7 @@ object ShulkerBoxHandler {
         state.inventory.contents = e.inventory.contents
         meta.blockState = state
         item.itemMeta = meta
-        player.equipment!!.setItemInMainHand(item.formatNBT(), true)
+        player.equipment!!.setItemInMainHand(item.formatNBT())
         player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
     }
 
