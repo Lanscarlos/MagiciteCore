@@ -5,7 +5,6 @@ import org.bukkit.command.CommandSender
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.info
 import taboolib.module.chat.colored
 
 /**
