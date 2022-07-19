@@ -43,15 +43,11 @@ object CommandMain {
                         var max = getExpAtLevel(player.level)
                         var exp = (player.exp * max).toInt()
                         while (target > 0) {
-                            info("exp -> " + exp)
-                            info("max -> " + max)
-                            info("target -> " + target)
                             if (player.level <= 0) {
-                                player.exp = 0f
+                                exp = 0
                                 break
-                            } else if (exp > target) {
+                            } else if (exp >= target) {
                                 exp -= target
-                                player.exp = exp.toFloat() / max
                                 break
                             } else {
                                 target -= exp
@@ -60,8 +56,9 @@ object CommandMain {
                                 exp = max
                             }
                         }
+                        player.exp = exp.toFloat() / max
                         sender.sendMessage("&7[&3MagiciteCore&7] &7成功扣除玩家 &b${player.name} &7的经验 &c-$arg".colored())
-                        sender.sendMessage("&7[&3MagiciteCore&7] &7玩家 &b${player.name} &7当前等级 &b${player.level} 经验剩余 &b${exp}".colored())
+                        sender.sendMessage("&7[&3MagiciteCore&7] &7玩家 &b${player.name} &7当前等级 &b${player.level} &7经验剩余 &b${exp}".colored())
                     }
                 }
             }
