@@ -1,16 +1,12 @@
 package top.lanscarlos.magicite.core.database
 
-import com.google.common.io.ByteStreams
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.info
 import taboolib.module.chat.colored
-import taboolib.module.porticus.Porticus
-import top.lanscarlos.magicite.core.MagiciteCore
 import top.lanscarlos.magicite.core.toInt
 import top.lanscarlos.magicite.core.warp.WarpHandler
 import top.lanscarlos.magicite.core.warp.WarpHandler.preWarp
@@ -24,29 +20,6 @@ import top.lanscarlos.magicite.core.warp.WarpHandler.preWarp
  */
 @CommandHeader(name = "magicitecore", aliases = ["magicite"], permission = "sacredlore.command")
 object CommandMain {
-
-    @CommandBody
-    val test = subCommand {
-        dynamic {
-            execute<CommandSender> { sender, _, arg ->
-                if (sender is Player) {
-                    info("玩家正在发送信息：$arg")
-                    sender.sendPluginMessage(MagiciteCore.plugin, "BungeeCord", ByteStreams.newDataOutput().also {
-                        it.writeUTF("BungeeCord")
-                        it.writeUTF(arg)
-                    }.toByteArray())
-                    sender.sendPluginMessage(MagiciteCore.plugin, "magicite:main", ByteStreams.newDataOutput().also {
-                        it.writeUTF("magicite:main")
-                        it.writeUTF(arg)
-                    }.toByteArray())
-                    Porticus.API.createMission().command(arg).onResponse{ info("onResponse..." + it) }.run(sender)
-                } else {
-                    info("控制台正在发送信息：$arg")
-                    MagiciteCore.plugin.server.sendPluginMessage(MagiciteCore.plugin, "magicite:main", ByteStreams.newDataOutput().also { it.writeUTF(arg) }.toByteArray())
-                }
-            }
-        }
-    }
 
     @CommandBody
     val setwarp = subCommand {
