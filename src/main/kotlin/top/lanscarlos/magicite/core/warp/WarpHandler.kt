@@ -52,8 +52,10 @@ object WarpHandler {
 
     @SubscribeEvent
     fun e(e: PlayerJoinEvent) {
-        if (e.player.uniqueId.toString() !in cache) return
-        val loc = cache.remove(e.player.uniqueId.toString())!!
-        e.player.teleport(loc)
+        submit(delay = 5) {
+            if (e.player.uniqueId.toString() !in cache) return@submit
+            val loc = cache.remove(e.player.uniqueId.toString())!!
+            e.player.teleport(loc)
+        }
     }
 }
