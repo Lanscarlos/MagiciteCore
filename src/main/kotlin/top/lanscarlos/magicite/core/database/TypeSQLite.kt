@@ -1,6 +1,7 @@
 package top.lanscarlos.magicite.core.database
 
 import taboolib.common.io.newFile
+import taboolib.module.database.ColumnOptionSQLite
 import taboolib.module.database.Host
 import taboolib.module.database.Table
 import taboolib.module.database.getHost
@@ -18,13 +19,30 @@ class TypeSQLite(file: File, prefix: String) : Type {
     private val table = Table("${prefix}_warp", host) {
         add { id() }
         add("name") {
-            type(taboolib.module.database.ColumnTypeSQLite.TEXT, 36)
+            type(taboolib.module.database.ColumnTypeSQLite.TEXT, 36) {
+                options(ColumnOptionSQLite.UNIQUE)
+            }
         }
         add("server") {
             type(taboolib.module.database.ColumnTypeSQLite.TEXT, 36)
         }
-        add("location") {
+        add("world") {
             type(taboolib.module.database.ColumnTypeSQLite.TEXT, 36)
+        }
+        add("x") {
+            type(taboolib.module.database.ColumnTypeSQLite.REAL, 36)
+        }
+        add("y") {
+            type(taboolib.module.database.ColumnTypeSQLite.REAL, 36)
+        }
+        add("z") {
+            type(taboolib.module.database.ColumnTypeSQLite.REAL, 36)
+        }
+        add("yaw") {
+            type(taboolib.module.database.ColumnTypeSQLite.REAL, 36)
+        }
+        add("pitch") {
+            type(taboolib.module.database.ColumnTypeSQLite.REAL, 36)
         }
     }
 
