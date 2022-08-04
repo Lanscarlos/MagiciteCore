@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BlockStateMeta
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.colored
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.getItemTag
@@ -71,13 +72,15 @@ object ShulkerBoxHandler {
             return
         }
 
-        val item = player.equipment?.itemInMainHand!!
-        val meta = item.itemMeta as BlockStateMeta
-        val state = meta.blockState as ShulkerBox
-        state.inventory.contents = e.inventory.contents
-        meta.blockState = state
-        item.itemMeta = meta
-        player.equipment!!.setItemInMainHand(item.formatNBT())
+        submit(delay = 1) {
+            val item = player.equipment?.itemInMainHand!!
+            val meta = item.itemMeta as BlockStateMeta
+            val state = meta.blockState as ShulkerBox
+            state.inventory.contents = e.inventory.contents
+            meta.blockState = state
+            item.itemMeta = meta
+            player.equipment!!.setItemInMainHand(item.formatNBT())
+        }
 //        player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
     }
 
