@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.CraftingInventory
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
@@ -17,7 +18,9 @@ import org.bukkit.inventory.meta.BlockStateMeta
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
+import taboolib.common5.Baffle
 import taboolib.module.chat.colored
+import taboolib.module.configuration.util.getStringColored
 import taboolib.module.nms.ItemTagData
 import taboolib.module.nms.getItemTag
 import taboolib.module.nms.setItemTag
@@ -25,6 +28,7 @@ import taboolib.platform.util.buildItem
 import taboolib.platform.util.hasName
 import taboolib.platform.util.isAir
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * MagiciteCore
@@ -34,6 +38,14 @@ import java.util.*
  * @since 2022-07-16 15:43
  */
 object ShulkerBoxHandler {
+
+    val baffle by lazy {
+        Baffle.of(MagiciteCore.config.getLong("ShulkerBox-setting.cooldown.on-open", 5), TimeUnit.SECONDS)
+    }
+
+    val message by lazy {
+        MagiciteCore.config.getStringColored("ShulkerBox-setting.cooldown.message")
+    }
 
     class LockedHolder : InventoryHolder {
         override fun getInventory(): Inventory = Optional.empty<Inventory>().get()
@@ -50,7 +62,15 @@ object ShulkerBoxHandler {
         if (!e.action.name.contains("RIGHT", true)) return
         val item = e.player.equipment?.itemInMainHand ?: return
         if (!item.isSkullBox()) return
+
         e.isCancelled = true
+
+        // 检查冷却
+        if (!baffle.hasNext(e.player.uniqueId.toString())) {
+            message?.let { e.player.sendMessage(it) }
+            return
+        }
+
         val inv = Bukkit.createInventory(LockedHolder(), 27, item.itemMeta!!.displayName)
         inv.contents = ((item.itemMeta as BlockStateMeta).blockState as ShulkerBox).inventory.contents
         e.player.openInventory(inv)
@@ -96,6 +116,11 @@ object ShulkerBoxHandler {
         item.itemMeta = meta
         player.equipment!!.setItemInMainHand(item.formatNBT())
         player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerQuitEvent) {
+        baffle.reset(e.player.uniqueId.toString())
     }
 
     fun ItemStack.formatNBT(): ItemStack {

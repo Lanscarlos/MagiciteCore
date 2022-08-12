@@ -1,4 +1,10 @@
 
+ShulkerBox-setting:
+  # 设置冷却 [ 单位 秒 ]
+  cooldown:
+    on-open: 5
+    message: '&7[&3MagiciteCore&7] 请勿频繁操作潜影盒...'
+
 # 数据库配置
 database-setting:
   enable: false
