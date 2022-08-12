@@ -42,13 +42,16 @@ object MagiciteCore : Plugin(), PluginMessageListener {
     override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
         if (channel != "BungeeCord") return
         val input = ByteStreams.newDataInput(message)
-        when (input.readUTF()) {
+        val sub = input.readUTF()
+        info("检测到来自 BungeeCord 端的信息 -> $sub")
+        when (sub) {
             "GetServer" -> {
                 serverName = input.readUTF()
             }
             "magicite:warp" -> {
                 val uuid = input.readUTF()
                 val id = input.readUTF()
+                info("检测到来自 BungeeCord 端的跨服信息 {id=$id,uuid=$uuid}")
                 postWarp(uuid, id)
             }
         }

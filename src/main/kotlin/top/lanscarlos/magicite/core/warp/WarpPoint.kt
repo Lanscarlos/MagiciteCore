@@ -14,4 +14,7 @@ class WarpPoint(
     val server: String,
     val loc: Location
 ) {
+    override fun toString(): String {
+        return "WarpPoint(id='$id', server='$server', loc=$loc)"
+    }
 }

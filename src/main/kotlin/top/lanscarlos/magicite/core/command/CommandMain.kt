@@ -1,4 +1,4 @@
-package top.lanscarlos.magicite.core.database
+package top.lanscarlos.magicite.core.command
 
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
