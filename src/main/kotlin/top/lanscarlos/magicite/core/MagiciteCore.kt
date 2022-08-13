@@ -73,6 +73,6 @@ object MagiciteCore : Plugin(), PluginMessageListener {
     @SubscribeEvent
     fun e(e: PlayerJoinEvent) {
         if (::serverName.isInitialized) return
-        submit(delay = 10) { requestServerName(e.player) }
+        submit(delay = 5) { requestServerName(e.player) }
     }
 }

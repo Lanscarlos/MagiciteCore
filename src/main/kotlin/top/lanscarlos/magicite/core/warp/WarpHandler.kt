@@ -59,7 +59,7 @@ object WarpHandler {
 
     @SubscribeEvent
     fun e(e: PlayerJoinEvent) {
-        submit(delay = 5) {
+        submit(delay = 10) {
             if (e.player.uniqueId.toString() !in cache) return@submit
             info("检测到目标玩家 ${e.player.name} 进入服务器...")
             val loc = cache.remove(e.player.uniqueId.toString())!!
