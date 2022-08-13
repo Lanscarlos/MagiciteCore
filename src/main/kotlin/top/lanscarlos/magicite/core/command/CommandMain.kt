@@ -7,6 +7,7 @@ import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.subCommand
 import taboolib.module.chat.colored
+import top.lanscarlos.magicite.core.MagiciteCore
 import top.lanscarlos.magicite.core.toInt
 import top.lanscarlos.magicite.core.warp.WarpHandler
 import top.lanscarlos.magicite.core.warp.WarpHandler.preWarp
@@ -20,6 +21,16 @@ import top.lanscarlos.magicite.core.warp.WarpHandler.preWarp
  */
 @CommandHeader(name = "magicitecore", aliases = ["magicite"], permission = "sacredlore.command")
 object CommandMain {
+
+    @CommandBody
+    val cmd = subCommand {
+        dynamic {
+            execute<CommandSender> { sender, _, cmd ->
+                MagiciteCore.bungeeCommand(cmd)
+                sender.sendMessage("&7[&3MagiciteCore&7] &7正在执行跨服命令: &b${cmd} &7!".colored())
+            }
+        }
+    }
 
     @CommandBody
     val setwarp = subCommand {
