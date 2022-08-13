@@ -68,6 +68,8 @@ object ShulkerBoxHandler {
         // 检查冷却
         if (!baffle.hasNext(e.player.uniqueId.toString())) {
             message?.let { e.player.sendMessage(it) }
+            e.player.closeInventory()
+            e.player.playSound(e.player.location, Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f)
             return
         }
 
