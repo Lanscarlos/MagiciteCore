@@ -1,6 +1,7 @@
 package top.lanscarlos.magicite.core
 
 import com.google.common.io.ByteStreams
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.messaging.PluginMessageListener
@@ -39,6 +40,13 @@ object MagiciteCore : Plugin(), PluginMessageListener {
         player.sendPluginMessage(plugin, "BungeeCord", output.toByteArray())
     }
 
+    fun bungeeCommand(cmd: String) {
+        val output = ByteStreams.newDataOutput()
+        output.writeUTF("magicite:cmd")
+        output.writeUTF(cmd)
+        Bukkit.getOnlinePlayers().firstOrNull()?.sendPluginMessage(plugin, "BungeeCord", output.toByteArray()) ?: error("Cannot find any player！")
+    }
+
     override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
         if (channel != "BungeeCord") return
         val input = ByteStreams.newDataInput(message)
@@ -47,6 +55,11 @@ object MagiciteCore : Plugin(), PluginMessageListener {
         when (sub) {
             "GetServer" -> {
                 serverName = input.readUTF()
+            }
+            "magicite:cmd" -> {
+                val cmd = input.readUTF()
+                info("正在执行跨服命令: $cmd")
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd)
             }
             "magicite:warp" -> {
                 val uuid = input.readUTF()
