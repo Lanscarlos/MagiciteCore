@@ -88,9 +88,11 @@ object ShulkerBoxHandler {
             player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f)
             return
         }
+
         if (player.equipment?.itemInMainHand?.isSkullBox() != true) {
             e.isCancelled = true
             player.closeInventory()
+            player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
             return
         }
 
@@ -101,9 +103,8 @@ object ShulkerBoxHandler {
             state.inventory.contents = e.inventory.contents
             meta.blockState = state
             item.itemMeta = meta
-            player.equipment!!.setItemInMainHand(item.formatNBT())
+//            player.equipment!!.setItemInMainHand(item.formatNBT())
         }
-//        player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
     }
 
     @SubscribeEvent
@@ -116,7 +117,7 @@ object ShulkerBoxHandler {
         state.inventory.contents = e.inventory.contents
         meta.blockState = state
         item.itemMeta = meta
-        player.equipment!!.setItemInMainHand(item.formatNBT())
+//        player.equipment!!.setItemInMainHand(item.formatNBT())
         player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
     }
 
@@ -125,17 +126,17 @@ object ShulkerBoxHandler {
         baffle.reset(e.player.uniqueId.toString())
     }
 
-    fun ItemStack.formatNBT(): ItemStack {
-        val item = this.clone()
-        val tag = this.getItemTag()
-        if (!tag.containsKey("BlockEntityTag")) return item
-        val compound = tag.getDeep("BlockEntityTag").asCompound()
-        compound.remove("x")
-        compound.remove("y")
-        compound.remove("z")
-        compound.remove("Lock")
-        compound.remove("id")
-        tag["BlockEntityTag"] = compound
-        return item.setItemTag(tag)
-    }
+//    fun ItemStack.formatNBT(): ItemStack {
+//        val item = this.clone()
+//        val tag = this.getItemTag()
+//        if (!tag.containsKey("BlockEntityTag")) return item
+//        val compound = tag.getDeep("BlockEntityTag").asCompound()
+//        compound.remove("x")
+//        compound.remove("y")
+//        compound.remove("z")
+//        compound.remove("Lock")
+//        compound.remove("id")
+//        tag["BlockEntityTag"] = compound
+//        return item.setItemTag(tag)
+//    }
 }
