@@ -8,8 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.*
 import org.bukkit.inventory.CraftingInventory
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
@@ -47,7 +46,7 @@ object ShulkerBoxHandler {
         MagiciteCore.config.getStringColored("ShulkerBox-setting.cooldown.message")
     }
 
-    class LockedHolder : InventoryHolder {
+    class LockedHolder(val item: ItemStack) : InventoryHolder {
         override fun getInventory(): Inventory = Optional.empty<Inventory>().get()
     }
 
@@ -73,7 +72,7 @@ object ShulkerBoxHandler {
             return
         }
 
-        val inv = Bukkit.createInventory(LockedHolder(), 27, item.itemMeta!!.displayName)
+        val inv = Bukkit.createInventory(LockedHolder(item), 27, item.itemMeta!!.displayName)
         inv.contents = ((item.itemMeta as BlockStateMeta).blockState as ShulkerBox).inventory.contents
         e.player.openInventory(inv)
         e.player.playSound(e.player.location, Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f)
@@ -82,14 +81,17 @@ object ShulkerBoxHandler {
     @SubscribeEvent
     fun e(e: InventoryClickEvent) {
         val player = e.whoClicked as? Player ?: return
-        if (player.openInventory.topInventory.holder !is LockedHolder) return
+        val holder = player.openInventory.topInventory.holder as? LockedHolder ?: return
+
         if (e.currentItem?.isSkullBox() == true || ((e.click == ClickType.NUMBER_KEY) && (player.inventory.getItem(e.hotbarButton)?.isSkullBox() == true))) {
             e.isCancelled = true
             player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f)
             return
         }
 
-        if (player.equipment?.itemInMainHand?.isSkullBox() != true) {
+        val item = holder.item
+
+        if (item != player.equipment?.itemInMainHand) {
             e.isCancelled = true
             player.closeInventory()
             player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
@@ -97,7 +99,6 @@ object ShulkerBoxHandler {
         }
 
         submit(delay = 1) {
-            val item = player.equipment?.itemInMainHand!!
             val meta = item.itemMeta as BlockStateMeta
             val state = meta.blockState as ShulkerBox
             state.inventory.contents = e.inventory.contents
@@ -110,8 +111,15 @@ object ShulkerBoxHandler {
     @SubscribeEvent
     fun e(e: InventoryCloseEvent) {
         val player = e.player as? Player ?: return
-        if (player.openInventory.topInventory.holder !is LockedHolder || player.equipment?.itemInMainHand?.isSkullBox() != true) return
-        val item = player.equipment?.itemInMainHand!!
+        val holder = player.openInventory.topInventory.holder as? LockedHolder ?: return
+        val item = holder.item
+
+        if (item != player.equipment?.itemInMainHand) {
+            player.closeInventory()
+            player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
+            return
+        }
+
         val meta = item.itemMeta as BlockStateMeta
         val state = meta.blockState as ShulkerBox
         state.inventory.contents = e.inventory.contents
@@ -119,6 +127,30 @@ object ShulkerBoxHandler {
         item.itemMeta = meta
 //        player.equipment!!.setItemInMainHand(item.formatNBT())
         player.playSound(player.location, Sound.BLOCK_SHULKER_BOX_CLOSE, 1f, 1f)
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerDropItemEvent) {
+        val player = e.player as? Player ?: return
+        if (player.openInventory.topInventory.holder is LockedHolder) {
+            e.isCancelled = true
+        }
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerItemHeldEvent) {
+        val player = e.player as? Player ?: return
+        if (player.openInventory.topInventory.holder is LockedHolder) {
+            e.isCancelled = true
+        }
+    }
+
+    @SubscribeEvent
+    fun e(e: PlayerSwapHandItemsEvent) {
+        val player = e.player as? Player ?: return
+        if (player.openInventory.topInventory.holder is LockedHolder) {
+            e.isCancelled = true
+        }
     }
 
     @SubscribeEvent
